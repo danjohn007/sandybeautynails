@@ -22,11 +22,27 @@ class BookingController extends Controller {
     public function index() {
         // Get business hours information for display
         $businessDays = BUSINESS_DAYS;
+        
+        // Translate days to Spanish
+        $dayTranslations = [
+            'Monday' => 'Lunes',
+            'Tuesday' => 'Martes', 
+            'Wednesday' => 'Miércoles',
+            'Thursday' => 'Jueves',
+            'Friday' => 'Viernes',
+            'Saturday' => 'Sábado',
+            'Sunday' => 'Domingo'
+        ];
+        
+        $translatedDays = array_map(function($day) use ($dayTranslations) {
+            return $dayTranslations[$day] ?? $day;
+        }, $businessDays);
+        
         $daysStr = '';
-        if (count($businessDays) > 1) {
-            $daysStr = implode(', ', array_slice($businessDays, 0, -1)) . ' y ' . end($businessDays);
+        if (count($translatedDays) > 1) {
+            $daysStr = implode(', ', array_slice($translatedDays, 0, -1)) . ' y ' . end($translatedDays);
         } else {
-            $daysStr = end($businessDays);
+            $daysStr = end($translatedDays);
         }
         
         $data = [
