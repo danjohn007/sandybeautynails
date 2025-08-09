@@ -28,12 +28,20 @@ class BookingController extends Controller {
         $isBusinessHour = $currentHour >= BUSINESS_START_HOUR && $currentHour < BUSINESS_END_HOUR;
         
         if (!$isBusinessDay || !$isBusinessHour) {
+            $businessDays = BUSINESS_DAYS;
+            $daysStr = '';
+            if (count($businessDays) > 1) {
+                $daysStr = implode(', ', array_slice($businessDays, 0, -1)) . ' y ' . end($businessDays);
+            } else {
+                $daysStr = end($businessDays);
+            }
+            
             $data = [
                 'title' => 'Fuera del horario de atención',
                 'businessHours' => [
                     'start' => BUSINESS_START_HOUR,
                     'end' => BUSINESS_END_HOUR,
-                    'days' => implode(', ', array_slice(BUSINESS_DAYS, 0, -1)) . ' y ' . end(BUSINESS_DAYS)
+                    'days' => $daysStr
                 ],
                 'isOutsideHours' => true
             ];
