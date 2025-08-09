@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandy Beauty Nails - Demo</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="public/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#home">
+                <i class="fas fa-nail-polish me-2"></i>
+                Sandy Beauty Nails
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">
+                            <i class="fas fa-home me-1"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#booking">
+                            <i class="fas fa-calendar-plus me-1"></i> Reservar Cita
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#admin">
+                            <i class="fas fa-user-shield me-1"></i> Administración
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="hero-section bg-gradient-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-sparkles me-3"></i>
+                        Bienvenido a Sandy Beauty Nails
+                    </h1>
+                    <p class="lead mb-4">
+                        Tu salón de belleza especializado en servicios de manicure, pedicure y nail art. 
+                        Agenda tu cita en línea de manera fácil y rápida.
+                    </p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <a href="#booking" class="btn btn-light btn-lg px-4 me-md-2">
+                            <i class="fas fa-calendar-plus me-2"></i>
+                            Reservar Cita
+                        </a>
+                        <a href="#servicios" class="btn btn-outline-light btn-lg px-4">
+                            Ver Servicios
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero-image">
+                        <i class="fas fa-hand-sparkles display-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-star me-2 text-primary"></i>
+                Nuestros Servicios
+            </h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 text-center service-card">
+                        <div class="card-body">
+                            <i class="fas fa-hand-holding-heart text-primary display-4 mb-3"></i>
+                            <h5 class="card-title">Manicure</h5>
+                            <p class="card-text">Cuidado completo de manos con limado, cutícula y esmaltado profesional.</p>
+                            <div class="text-primary fw-bold">$250 - $350</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 text-center service-card">
+                        <div class="card-body">
+                            <i class="fas fa-shoe-prints text-primary display-4 mb-3"></i>
+                            <h5 class="card-title">Pedicure</h5>
+                            <p class="card-text">Tratamiento relajante para pies con cuidado de uñas y masaje revitalizante.</p>
+                            <div class="text-primary fw-bold">$300 - $450</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 text-center service-card">
+                        <div class="card-body">
+                            <i class="fas fa-magic text-primary display-4 mb-3"></i>
+                            <h5 class="card-title">Uñas Acrílicas</h5>
+                            <p class="card-text">Extensión y decoración con técnicas profesionales para uñas duraderas.</p>
+                            <div class="text-primary fw-bold">$800</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 text-center service-card">
+                        <div class="card-body">
+                            <i class="fas fa-paint-brush text-primary display-4 mb-3"></i>
+                            <h5 class="card-title">Nail Art</h5>
+                            <p class="card-text">Diseños únicos y personalizados para expresar tu estilo personal.</p>
+                            <div class="text-primary fw-bold">$400</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h2 class="mb-0">
+                                <i class="fas fa-calendar-plus me-2"></i>
+                                Reservar Nueva Cita
+                            </h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="demoBookingForm">
+                                <!-- Step 1: Customer Information -->
+                                <div class="booking-step" id="step1">
+                                    <h4 class="mb-4">
+                                        <span class="badge bg-primary me-2">1</span>
+                                        Información del Cliente
+                                    </h4>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label">
+                                                <i class="fas fa-phone me-1"></i>
+                                                Teléfono <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                                   placeholder="555-1234567" required>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Si ya eres cliente, tus datos se cargarán automáticamente
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-outline-primary mt-4" id="checkCustomerBtn">
+                                                <i class="fas fa-search me-1"></i>
+                                                Verificar Cliente
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="customerInfo" class="mt-4">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="name" class="form-label">
+                                                    <i class="fas fa-user me-1"></i>
+                                                    Nombre Completo <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text" class="form-control" id="name" name="name" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="email" class="form-label">
+                                                    <i class="fas fa-envelope me-1"></i>
+                                                    Correo Electrónico
+                                                </label>
+                                                <input type="email" class="form-control" id="email" name="email">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="button" class="btn btn-primary" id="nextStep1">
+                                            Siguiente <i class="fas fa-arrow-right ms-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Service Selection -->
+                                <div class="booking-step" id="step2" style="display: none;">
+                                    <h4 class="mb-4">
+                                        <span class="badge bg-primary me-2">2</span>
+                                        Seleccionar Servicio
+                                    </h4>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <label for="service_id" class="form-label">
+                                                <i class="fas fa-star me-1"></i>
+                                                Servicio <span class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-select" id="service_id" name="service_id" required>
+                                                <option value="">Selecciona un servicio...</option>
+                                                <option value="1" data-price="250" data-duration="60">Manicure Básico - $250.00</option>
+                                                <option value="2" data-price="350" data-duration="90">Manicure Completo - $350.00</option>
+                                                <option value="3" data-price="300" data-duration="75">Pedicure Básico - $300.00</option>
+                                                <option value="4" data-price="800" data-duration="180">Uñas Acrílicas - $800.00</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="manicurist_id" class="form-label">
+                                                <i class="fas fa-user-md me-1"></i>
+                                                Manicurista (Opcional)
+                                            </label>
+                                            <select class="form-select" id="manicurist_id" name="manicurist_id">
+                                                <option value="">Cualquier disponible</option>
+                                                <option value="1">Sandy Rodriguez</option>
+                                                <option value="2">María González</option>
+                                                <option value="3">Ana Martínez</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-outline-secondary" id="prevStep2">
+                                            <i class="fas fa-arrow-left me-1"></i> Anterior
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="nextStep2">
+                                            Siguiente <i class="fas fa-arrow-right ms-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Date & Time -->
+                                <div class="booking-step" id="step3" style="display: none;">
+                                    <h4 class="mb-4">
+                                        <span class="badge bg-primary me-2">3</span>
+                                        Fecha y Hora
+                                    </h4>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="appointment_date" class="form-label">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                Fecha de la Cita <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="date" class="form-control" id="appointment_date" name="appointment_date" 
+                                                   required min="<?= date('Y-m-d') ?>">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="appointment_time" class="form-label">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Hora de la Cita <span class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-select" id="appointment_time" name="appointment_time" required>
+                                                <option value="">Selecciona un horario...</option>
+                                                <option value="09:00">9:00 AM</option>
+                                                <option value="10:00">10:00 AM</option>
+                                                <option value="11:00">11:00 AM</option>
+                                                <option value="14:00">2:00 PM</option>
+                                                <option value="15:00">3:00 PM</option>
+                                                <option value="16:00">4:00 PM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-outline-secondary" id="prevStep3">
+                                            <i class="fas fa-arrow-left me-1"></i> Anterior
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-lg" id="submitBooking">
+                                            <i class="fas fa-check me-2"></i>
+                                            Confirmar Cita
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Section -->
+    <section id="admin" class="py-5 bg-dark text-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                            <h4>Dashboard</h4>
+                            <p>Estadísticas en tiempo real y resumen de actividades diarias</p>
+                            <div class="row text-center mt-3">
+                                <div class="col-6">
+                                    <div class="stat-number">12</div>
+                                    <small>Citas Hoy</small>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-number">$3,200</div>
+                                    <small>Ingresos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-calendar-check fa-3x mb-3"></i>
+                            <h4>Reservaciones</h4>
+                            <p>Gestión completa de citas con filtros avanzados y cambio de estados</p>
+                            <div class="mt-3">
+                                <span class="badge bg-light text-dark">Confirmadas: 8</span>
+                                <span class="badge bg-warning text-dark">Pendientes: 4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card bg-info text-white h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <h4>Reportes</h4>
+                            <p>Análisis financiero y gráficas de rendimiento por servicios</p>
+                            <div class="mt-3">
+                                <div>Servicio más popular:</div>
+                                <strong>Manicure Completo</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button class="btn btn-primary btn-lg" onclick="showLoginModal()">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Acceder al Panel Administrativo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-shield me-2"></i>
+                        Acceso Administrativo
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="username" value="admin">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" value="admin123">
+                        </div>
+                        <div class="alert alert-info">
+                            <small><strong>Demo:</strong> Usuario: admin, Contraseña: admin123</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="demoLogin()">
+                        <i class="fas fa-sign-in-alt me-1"></i>
+                        Ingresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-circle me-2"></i>
+                        ¡Éxito!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="successMessage">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <h5><i class="fas fa-nail-polish me-2"></i>Sandy Beauty Nails</h5>
+            <p class="mb-0">Sistema completo de gestión de citas para salones de belleza</p>
+            <p class="mt-2">
+                <i class="fas fa-clock me-2"></i>
+                Lunes a Sábado: 8:00 - 19:00 hrs | Domingos: Cerrado
+            </p>
+            <small>&copy; 2025 Sandy Beauty Nails. Todos los derechos reservados.</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Demo JavaScript -->
+    <script>
+        let currentStep = 1;
+        
+        // Demo booking flow
+        document.getElementById('nextStep1').addEventListener('click', () => {
+            const phone = document.getElementById('phone').value;
+            const name = document.getElementById('name').value;
+            
+            if (!phone || !name) {
+                alert('Por favor completa todos los campos requeridos');
+                return;
+            }
+            
+            showStep(2);
+        });
+        
+        document.getElementById('prevStep2').addEventListener('click', () => showStep(1));
+        document.getElementById('nextStep2').addEventListener('click', () => {
+            const service = document.getElementById('service_id').value;
+            if (!service) {
+                alert('Por favor selecciona un servicio');
+                return;
+            }
+            showStep(3);
+        });
+        
+        document.getElementById('prevStep3').addEventListener('click', () => showStep(2));
+        
+        document.getElementById('submitBooking').addEventListener('click', () => {
+            const date = document.getElementById('appointment_date').value;
+            const time = document.getElementById('appointment_time').value;
+            
+            if (!date || !time) {
+                alert('Por favor selecciona fecha y hora');
+                return;
+            }
+            
+            const customerName = document.getElementById('name').value;
+            const serviceName = document.getElementById('service_id').selectedOptions[0].text;
+            const selectedDate = new Date(date).toLocaleDateString('es-MX');
+            
+            document.getElementById('successMessage').innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <h4>¡Cita Confirmada!</h4>
+                    <p><strong>Cliente:</strong> ${customerName}</p>
+                    <p><strong>Servicio:</strong> ${serviceName}</p>
+                    <p><strong>Fecha:</strong> ${selectedDate}</p>
+                    <p><strong>Hora:</strong> ${time}</p>
+                    <div class="alert alert-info mt-3">
+                        <small>En el sistema real, se procesaría el pago y se enviarían confirmaciones por email/SMS.</small>
+                    </div>
+                </div>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+            
+            // Reset form
+            setTimeout(() => {
+                document.getElementById('demoBookingForm').reset();
+                showStep(1);
+            }, 3000);
+        });
+        
+        document.getElementById('checkCustomerBtn').addEventListener('click', () => {
+            const phone = document.getElementById('phone').value;
+            if (phone === '555-1001') {
+                document.getElementById('name').value = 'Laura Hernández';
+                document.getElementById('email').value = 'laura.hernandez@email.com';
+                alert('¡Cliente encontrado! Datos cargados automáticamente.');
+            } else {
+                alert('Cliente nuevo. Completa tus datos para continuar.');
+            }
+        });
+        
+        function showStep(step) {
+            document.querySelectorAll('.booking-step').forEach(s => s.style.display = 'none');
+            document.getElementById(`step${step}`).style.display = 'block';
+            currentStep = step;
+        }
+        
+        function showLoginModal() {
+            new bootstrap.Modal(document.getElementById('loginModal')).show();
+        }
+        
+        function demoLogin() {
+            document.getElementById('successMessage').innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-user-shield text-primary fa-3x mb-3"></i>
+                    <h4>¡Acceso Concedido!</h4>
+                    <p>En el sistema real, serías redirigido al dashboard administrativo completo con:</p>
+                    <ul class="text-start">
+                        <li>Estadísticas en tiempo real</li>
+                        <li>Gestión de reservaciones</li>
+                        <li>Administración de clientes</li>
+                        <li>Reportes financieros</li>
+                        <li>Gráficas y analytics</li>
+                    </ul>
+                </div>
+            `;
+            bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Set minimum date to today
+        document.getElementById('appointment_date').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
