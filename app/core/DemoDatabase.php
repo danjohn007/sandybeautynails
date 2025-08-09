@@ -6,7 +6,7 @@ class DemoDatabase {
     private function __construct() {
         try {
             // Use SQLite for demo
-            $dbPath = __DIR__ . '/../../storage/sandy_beauty_nails.db';
+            $dbPath = dirname(dirname(__DIR__)) . '/storage/sandy_beauty_nails.db';
             
             // Ensure directory exists
             if (!file_exists(dirname($dbPath))) {
@@ -26,8 +26,8 @@ class DemoDatabase {
     }
 
     private function initializeDemo() {
-        // Check if tables exist
-        $tables = $this->connection->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll(PDO::FETCH_COLUMN);
+        // Check if services table exists (the main table we need)
+        $tables = $this->connection->query("SELECT name FROM sqlite_master WHERE type='table' AND name='services'")->fetchAll(PDO::FETCH_COLUMN);
         
         if (empty($tables)) {
             $this->createTables();

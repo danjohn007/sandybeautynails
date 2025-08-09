@@ -20,40 +20,41 @@ class BookingController extends Controller {
     }
 
     public function index() {
-        // Check business hours
-        $currentDay = date('l');
-        $currentHour = (int)date('H');
+        // Get business hours information for display
+        $businessDays = BUSINESS_DAYS;
         
-        $isBusinessDay = in_array($currentDay, BUSINESS_DAYS);
-        $isBusinessHour = $currentHour >= BUSINESS_START_HOUR && $currentHour < BUSINESS_END_HOUR;
+        // Translate days to Spanish
+        $dayTranslations = [
+            'Monday' => 'Lunes',
+            'Tuesday' => 'Martes', 
+            'Wednesday' => 'Miércoles',
+            'Thursday' => 'Jueves',
+            'Friday' => 'Viernes',
+            'Saturday' => 'Sábado',
+            'Sunday' => 'Domingo'
+        ];
         
-        if (!$isBusinessDay || !$isBusinessHour) {
-            $businessDays = BUSINESS_DAYS;
-            $daysStr = '';
-            if (count($businessDays) > 1) {
-                $daysStr = implode(', ', array_slice($businessDays, 0, -1)) . ' y ' . end($businessDays);
-            } else {
-                $daysStr = end($businessDays);
-            }
-            
-            $data = [
-                'title' => 'Fuera del horario de atención',
-                'businessHours' => [
-                    'start' => BUSINESS_START_HOUR,
-                    'end' => BUSINESS_END_HOUR,
-                    'days' => $daysStr
-                ],
-                'isOutsideHours' => true
-            ];
-            $this->view('booking/closed', $data);
-            return;
+        $translatedDays = array_map(function($day) use ($dayTranslations) {
+            return $dayTranslations[$day] ?? $day;
+        }, $businessDays);
+        
+        $daysStr = '';
+        if (count($translatedDays) > 1) {
+            $daysStr = implode(', ', array_slice($translatedDays, 0, -1)) . ' y ' . end($translatedDays);
+        } else {
+            $daysStr = end($translatedDays);
         }
-
+        
         $data = [
             'title' => 'Reservar Cita - ' . APP_NAME,
             'services' => $this->serviceModel->getAll(),
             'manicurists' => $this->manicuristModel->getAll(),
-            'csrfToken' => $this->generateCSRFToken()
+            'csrfToken' => $this->generateCSRFToken(),
+            'businessHours' => [
+                'start' => BUSINESS_START_HOUR,
+                'end' => BUSINESS_END_HOUR,
+                'days' => $daysStr
+            ]
         ];
 
         $this->view('booking/index', $data);

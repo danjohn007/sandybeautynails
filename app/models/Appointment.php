@@ -1,5 +1,7 @@
 <?php
-require_once 'app/core/Database.php';
+if (!class_exists('Database')) {
+    require_once 'app/core/Database.php';
+}
 
 class Appointment {
     private $db;

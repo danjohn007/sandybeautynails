@@ -1,15 +1,13 @@
 <?php
 session_start();
 
-// Use demo configuration for testing
-if (isset($_GET['demo']) || !file_exists('config/config.php') || filesize('config/config.php') < 100) {
-    require_once 'config/demo_config.php';
+// Always use demo configuration for demo.php
+require_once 'config/demo_config.php';
+
+// Handle database class loading for demo
+if (!class_exists('Database')) {
     require_once 'app/core/DemoDatabase.php';
-    // Alias DemoDatabase as Database for compatibility
     class_alias('DemoDatabase', 'Database');
-} else {
-    require_once 'config/config.php';
-    require_once 'app/core/Database.php';
 }
 
 require_once 'app/core/Router.php';
