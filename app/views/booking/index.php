@@ -14,6 +14,22 @@ ob_start();
                 </div>
                 <div class="card-body p-4">
                     
+                    <!-- Business Hours Information -->
+                    <div class="alert alert-info mb-4">
+                        <h6 class="mb-2">
+                            <i class="fas fa-clock me-2"></i>
+                            Horarios de Atención
+                        </h6>
+                        <p class="mb-1">
+                            <strong><?= $businessHours['days'] ?>:</strong> 
+                            <?= $businessHours['start'] ?>:00 - <?= $businessHours['end'] ?>:00 horas
+                        </p>
+                        <p class="mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <small>Puedes solicitar tu cita en cualquier momento, pero las citas solo se pueden agendar durante nuestros horarios de atención.</small>
+                        </p>
+                    </div>
+                    
                     <!-- Booking Form -->
                     <form id="bookingForm" method="POST" action="<?= APP_URL ?>/booking/submit">
                         <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
