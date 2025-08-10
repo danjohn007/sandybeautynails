@@ -75,25 +75,33 @@ class BookingController extends Controller {
 
         // Validate phone format (basic validation)
         if (!preg_match('/^\d{3}-\d{4}$|^\d{7,10}$/', $phone)) {
-            $this->json(['error' => 'Formato de teléfono inválido'], 400);
+            $this->json(['error' => 'Formato de teléfono inválido. Use el formato 555-1234 o un número de 7-10 dígitos'], 400);
             return;
         }
 
-        $customer = $this->customerModel->findByPhone($phone);
-        
-        if ($customer) {
-            $this->json([
-                'exists' => true,
-                'customer' => [
-                    'id' => $customer['id'],
-                    'name' => $customer['name'],
-                    'email' => $customer['email'],
-                    'cedula' => $customer['cedula'],
-                    'total_appointments' => $customer['total_appointments']
-                ]
-            ]);
-        } else {
-            $this->json(['exists' => false]);
+        try {
+            $customer = $this->customerModel->findByPhone($phone);
+            
+            if ($customer) {
+                $this->json([
+                    'exists' => true,
+                    'customer' => [
+                        'id' => $customer['id'],
+                        'name' => $customer['name'],
+                        'email' => $customer['email'],
+                        'cedula' => $customer['cedula'],
+                        'total_appointments' => $customer['total_appointments']
+                    ]
+                ]);
+            } else {
+                $this->json([
+                    'exists' => false,
+                    'message' => 'Cliente nuevo. Complete los datos para continuar con la reserva.'
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log('Error checking customer: ' . $e->getMessage());
+            $this->json(['error' => 'Error al verificar cliente. Intente nuevamente.'], 500);
         }
     }
 

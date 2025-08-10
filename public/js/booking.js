@@ -72,18 +72,41 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Basic phone validation
+        if (phone.length < 7) {
+            Utils.showToast('El número de teléfono debe tener al menos 7 dígitos', 'warning');
+            return;
+        }
+
         Utils.showLoading();
 
         const formData = new FormData();
         formData.append('phone', phone);
 
-        fetch(window.location.origin + '/booking/check-customer', {
+        // Construct URL more robustly to handle different base configurations
+        let baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        let checkCustomerUrl = baseUrl + '/booking/check-customer';
+        
+        // Clean up double slashes except after protocol
+        checkCustomerUrl = checkCustomerUrl.replace(/([^:]\/)\/+/g, '$1');
+
+        fetch(checkCustomerUrl, {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             Utils.hideLoading();
+            
+            if (data.error) {
+                Utils.showToast(data.error, 'danger');
+                return;
+            }
             
             customerInfoDiv.style.display = 'block';
             
@@ -113,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('email').value = '';
                 document.getElementById('cedula').value = '';
                 
-                Utils.showToast('Cliente nuevo. Completa tus datos para continuar', 'info');
+                Utils.showToast(data.message || 'Cliente nuevo. Completa tus datos para continuar', 'info');
             }
             
             // Enable next button
@@ -124,8 +147,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             Utils.hideLoading();
-            Utils.showToast('Error al verificar cliente', 'danger');
+            Utils.showToast('Error al verificar cliente. Intente nuevamente.', 'danger');
             console.error('Error:', error);
+            
+            // Still show customer info section for new customer entry
+            customerInfoDiv.style.display = 'block';
+            nextBtn.disabled = false;
         });
     }
 
@@ -172,11 +199,23 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('manicurist_id', manicuristId);
         }
 
-        fetch(window.location.origin + '/booking/get-availability', {
+        // Construct URL more robustly to handle different base configurations
+        let baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        let availabilityUrl = baseUrl + '/booking/get-availability';
+        
+        // Clean up double slashes except after protocol
+        availabilityUrl = availabilityUrl.replace(/([^:]\/)\/+/g, '$1');
+
+        fetch(availabilityUrl, {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             timeSelect.innerHTML = '';
             
@@ -204,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             timeSelect.innerHTML = '<option value="">Error al cargar</option>';
-            Utils.showToast('Error al cargar horarios disponibles', 'danger');
+            Utils.showToast('Error al cargar horarios disponibles. Intente nuevamente.', 'danger');
             console.error('Error:', error);
         });
     }
