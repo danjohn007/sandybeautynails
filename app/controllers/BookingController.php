@@ -10,45 +10,18 @@ class BookingController extends Controller {
     private $serviceModel;
     private $manicuristModel;
     private $appointmentModel;
-    private $dbType;
 
     public function __construct() {
         parent::__construct();
         
-        // Try to detect database type and handle connection gracefully
         try {
             $this->customerModel = new Customer();
             $this->serviceModel = new Service();
             $this->manicuristModel = new Manicurist();
             $this->appointmentModel = new Appointment();
-            $this->dbType = 'mysql';
         } catch (Exception $e) {
-            error_log("Database connection failed: " . $e->getMessage());
-            
-            // Try to fallback to demo database if main database fails
-            if (!defined('DEMO_MODE')) {
-                try {
-                    require_once 'app/core/DemoDatabase.php';
-                    
-                    // Temporarily alias DemoDatabase to Database for models
-                    if (!class_exists('Database')) {
-                        class_alias('DemoDatabase', 'Database');
-                    }
-                    
-                    $this->customerModel = new Customer();
-                    $this->serviceModel = new Service();
-                    $this->manicuristModel = new Manicurist();
-                    $this->appointmentModel = new Appointment();
-                    $this->dbType = 'sqlite_fallback';
-                    
-                    error_log("Using SQLite fallback database");
-                } catch (Exception $e2) {
-                    error_log("Both MySQL and SQLite failed: " . $e2->getMessage());
-                    throw new Exception("Database connection failed completely");
-                }
-            } else {
-                throw $e;
-            }
+            error_log("BookingController initialization failed: " . $e->getMessage());
+            throw new Exception("Sistema de reservas no disponible temporalmente. Por favor intenta más tarde.");
         }
     }
 
@@ -292,7 +265,7 @@ class BookingController extends Controller {
             $this->db->commit();
 
             // Log successful booking
-            error_log("Booking successful: Customer $customerId, Appointment $appointmentId, DB Type: " . ($this->dbType ?? 'unknown'));
+            error_log("Booking successful: Customer $customerId, Appointment $appointmentId");
 
             // Redirect to payment or success page
             $_SESSION['appointment_id'] = $appointmentId;
@@ -304,11 +277,6 @@ class BookingController extends Controller {
             
             $errorMessage = $e->getMessage();
             $logMessage = 'Booking error: ' . $errorMessage;
-            
-            // Log the full error with context
-            if (isset($this->dbType)) {
-                $logMessage .= ' (DB Type: ' . $this->dbType . ')';
-            }
             
             error_log($logMessage);
             

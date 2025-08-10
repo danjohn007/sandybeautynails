@@ -38,3 +38,6 @@ date_default_timezone_set(APP_TIMEZONE);
 // Error reporting (set to 0 in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+// Database fallback flag - enables SQLite fallback if MySQL fails
+define('ENABLE_DB_FALLBACK', true);

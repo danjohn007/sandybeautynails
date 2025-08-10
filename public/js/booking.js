@@ -77,9 +77,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('phone', phone);
 
-        let baseUrl = window.location.pathname.includes('demo.php') 
-            ? window.location.origin + '/demo.php?route=' 
-            : window.location.origin + '/';
+        let baseUrl;
+        if (window.location.pathname.includes('demo.php')) {
+            baseUrl = window.location.origin + '/demo.php?route=';
+        } else if (window.location.pathname.includes('index.php') || window.location.search.includes('route=')) {
+            baseUrl = window.location.origin + '/index.php?route=';
+        } else {
+            baseUrl = window.location.origin + '/';
+        }
             
         fetch(baseUrl + 'booking/check-customer', {
             method: 'POST',
@@ -194,9 +199,14 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('manicurist_id', manicuristId);
         }
 
-        let baseUrl = window.location.pathname.includes('demo.php') 
-            ? window.location.origin + '/demo.php?route=' 
-            : window.location.origin + '/';
+        let baseUrl;
+        if (window.location.pathname.includes('demo.php')) {
+            baseUrl = window.location.origin + '/demo.php?route=';
+        } else if (window.location.pathname.includes('index.php') || window.location.search.includes('route=')) {
+            baseUrl = window.location.origin + '/index.php?route=';
+        } else {
+            baseUrl = window.location.origin + '/';
+        }
 
         fetch(baseUrl + 'booking/get-availability', {
             method: 'POST',
