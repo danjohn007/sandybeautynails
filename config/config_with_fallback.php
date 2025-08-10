@@ -1,5 +1,5 @@
 <?php
-// Database configuration
+// Database configuration with production fallback
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'fix360_sandy');
 define('DB_USER', 'fix360_sandy');
@@ -35,9 +35,11 @@ define('EMAIL_FROM', 'noreply@sandybeautynails.com');
 // Set timezone
 date_default_timezone_set(APP_TIMEZONE);
 
-// Error reporting (set to 0 in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Error reporting (reduced for production)
+error_reporting(E_ERROR | E_WARNING);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
-// Database fallback flag - enables SQLite fallback if MySQL fails
+// Database fallback flag - production will attempt MySQL first, then SQLite
 define('ENABLE_DB_FALLBACK', true);
+?>

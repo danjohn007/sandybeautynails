@@ -13,10 +13,16 @@ class BookingController extends Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->customerModel = new Customer();
-        $this->serviceModel = new Service();
-        $this->manicuristModel = new Manicurist();
-        $this->appointmentModel = new Appointment();
+        
+        try {
+            $this->customerModel = new Customer();
+            $this->serviceModel = new Service();
+            $this->manicuristModel = new Manicurist();
+            $this->appointmentModel = new Appointment();
+        } catch (Exception $e) {
+            error_log("BookingController initialization failed: " . $e->getMessage());
+            throw new Exception("Sistema de reservas no disponible temporalmente. Por favor intenta más tarde.");
+        }
     }
 
     public function index() {
@@ -66,34 +72,39 @@ class BookingController extends Controller {
             return;
         }
 
-        $phone = $this->sanitize($this->input('phone'));
-        
-        if (empty($phone)) {
-            $this->json(['error' => 'Teléfono requerido'], 400);
-            return;
-        }
+        try {
+            $phone = $this->sanitize($this->input('phone'));
+            
+            if (empty($phone)) {
+                $this->json(['error' => 'Teléfono requerido'], 400);
+                return;
+            }
 
-        // Validate phone format (basic validation)
-        if (!preg_match('/^\d{3}-\d{4}$|^\d{7,10}$/', $phone)) {
-            $this->json(['error' => 'Formato de teléfono inválido'], 400);
-            return;
-        }
+            // Validate phone format (basic validation)
+            if (!preg_match('/^\d{3}-\d{4}$|^\d{7,10}$/', $phone)) {
+                $this->json(['error' => 'Formato de teléfono inválido'], 400);
+                return;
+            }
 
-        $customer = $this->customerModel->findByPhone($phone);
-        
-        if ($customer) {
-            $this->json([
-                'exists' => true,
-                'customer' => [
-                    'id' => $customer['id'],
-                    'name' => $customer['name'],
-                    'email' => $customer['email'],
-                    'cedula' => $customer['cedula'],
-                    'total_appointments' => $customer['total_appointments']
-                ]
-            ]);
-        } else {
-            $this->json(['exists' => false]);
+            $customer = $this->customerModel->findByPhone($phone);
+            
+            if ($customer) {
+                $this->json([
+                    'exists' => true,
+                    'customer' => [
+                        'id' => $customer['id'],
+                        'name' => $customer['name'],
+                        'email' => $customer['email'],
+                        'cedula' => $customer['cedula'],
+                        'total_appointments' => $customer['total_appointments'] ?? 0
+                    ]
+                ]);
+            } else {
+                $this->json(['exists' => false]);
+            }
+        } catch (Exception $e) {
+            error_log('Error in checkCustomer: ' . $e->getMessage());
+            $this->json(['error' => 'Error interno del servidor. Por favor intenta de nuevo.'], 500);
         }
     }
 
@@ -103,33 +114,38 @@ class BookingController extends Controller {
             return;
         }
 
-        $date = $this->sanitize($this->input('date'));
-        $manicuristId = $this->sanitize($this->input('manicurist_id'));
+        try {
+            $date = $this->sanitize($this->input('date'));
+            $manicuristId = $this->sanitize($this->input('manicurist_id'));
 
-        if (empty($date)) {
-            $this->json(['error' => 'Fecha requerida'], 400);
-            return;
+            if (empty($date)) {
+                $this->json(['error' => 'Fecha requerida'], 400);
+                return;
+            }
+
+            // Validate date is not in the past
+            if (strtotime($date) < strtotime('today')) {
+                $this->json(['error' => 'No se pueden hacer citas en fechas pasadas'], 400);
+                return;
+            }
+
+            // Check if it's a business day
+            $dayOfWeek = date('l', strtotime($date));
+            if (!in_array($dayOfWeek, BUSINESS_DAYS)) {
+                $this->json(['error' => 'No atendemos ese día de la semana'], 400);
+                return;
+            }
+
+            $availableSlots = $this->appointmentModel->getAvailableSlots($date, $manicuristId);
+            
+            $this->json([
+                'date' => $date,
+                'slots' => $availableSlots
+            ]);
+        } catch (Exception $e) {
+            error_log('Error in getAvailability: ' . $e->getMessage());
+            $this->json(['error' => 'Error interno al cargar horarios disponibles'], 500);
         }
-
-        // Validate date is not in the past
-        if (strtotime($date) < strtotime('today')) {
-            $this->json(['error' => 'No se pueden hacer citas en fechas pasadas'], 400);
-            return;
-        }
-
-        // Check if it's a business day
-        $dayOfWeek = date('l', strtotime($date));
-        if (!in_array($dayOfWeek, BUSINESS_DAYS)) {
-            $this->json(['error' => 'No atendemos ese día de la semana'], 400);
-            return;
-        }
-
-        $availableSlots = $this->appointmentModel->getAvailableSlots($date, $manicuristId);
-        
-        $this->json([
-            'date' => $date,
-            'slots' => $availableSlots
-        ]);
     }
 
     public function submit() {
@@ -138,43 +154,58 @@ class BookingController extends Controller {
             return;
         }
 
-        // Validate CSRF token
-        $csrfToken = $this->input('csrf_token');
-        if (!$this->validateCSRFToken($csrfToken)) {
-            $_SESSION['error'] = 'Token de seguridad inválido. Intente nuevamente.';
-            $this->redirect('booking');
-            return;
-        }
-
-        // Validate required fields
-        $requiredFields = [
-            'phone' => 'Teléfono',
-            'name' => 'Nombre completo',
-            'service_id' => 'Servicio',
-            'appointment_date' => 'Fecha de cita',
-            'appointment_time' => 'Hora de cita'
-        ];
-
-        $errors = $this->validateRequired($requiredFields);
-        
-        if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            $_SESSION['old_input'] = $_POST;
-            $this->redirect('booking');
-            return;
-        }
-
-        $phone = $this->sanitize($this->input('phone'));
-        $name = $this->sanitize($this->input('name'));
-        $email = $this->sanitize($this->input('email'));
-        $cedula = $this->sanitize($this->input('cedula'));
-        $serviceId = (int)$this->input('service_id');
-        $manicuristId = $this->input('manicurist_id') ? (int)$this->input('manicurist_id') : null;
-        $appointmentDate = $this->sanitize($this->input('appointment_date'));
-        $appointmentTime = $this->sanitize($this->input('appointment_time'));
-        $notes = $this->sanitize($this->input('notes'));
-
         try {
+            // Validate CSRF token
+            $csrfToken = $this->input('csrf_token');
+            if (!$this->validateCSRFToken($csrfToken)) {
+                $_SESSION['error'] = 'Token de seguridad inválido. Intente nuevamente.';
+                $this->redirect('booking');
+                return;
+            }
+
+            // Validate required fields
+            $requiredFields = [
+                'phone' => 'Teléfono',
+                'name' => 'Nombre completo',
+                'service_id' => 'Servicio',
+                'appointment_date' => 'Fecha de cita',
+                'appointment_time' => 'Hora de cita'
+            ];
+
+            $errors = $this->validateRequired($requiredFields);
+            
+            if (!empty($errors)) {
+                $_SESSION['errors'] = $errors;
+                $_SESSION['old_input'] = $_POST;
+                $this->redirect('booking');
+                return;
+            }
+
+            $phone = $this->sanitize($this->input('phone'));
+            $name = $this->sanitize($this->input('name'));
+            $email = $this->sanitize($this->input('email'));
+            $cedula = $this->sanitize($this->input('cedula'));
+            $serviceId = (int)$this->input('service_id');
+            $manicuristId = $this->input('manicurist_id') ? (int)$this->input('manicurist_id') : null;
+            $appointmentDate = $this->sanitize($this->input('appointment_date'));
+            $appointmentTime = $this->sanitize($this->input('appointment_time'));
+            $notes = $this->sanitize($this->input('notes'));
+
+            // Additional validation
+            if (empty($name) || strlen($name) < 2) {
+                $_SESSION['errors'] = ['name' => 'El nombre debe tener al menos 2 caracteres'];
+                $_SESSION['old_input'] = $_POST;
+                $this->redirect('booking');
+                return;
+            }
+
+            if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['errors'] = ['email' => 'Formato de email inválido'];
+                $_SESSION['old_input'] = $_POST;
+                $this->redirect('booking');
+                return;
+            }
+
             $this->db->beginTransaction();
 
             // Check or create customer
@@ -190,12 +221,17 @@ class BookingController extends Controller {
                     ]);
                 }
             } else {
+                // Create new customer
                 $customerId = $this->customerModel->create([
                     'phone' => $phone,
                     'name' => $name,
                     'email' => $email,
                     'cedula' => $cedula
                 ]);
+                
+                if (!$customerId) {
+                    throw new Exception('Error al crear cliente');
+                }
             }
 
             // Get service details
@@ -221,17 +257,39 @@ class BookingController extends Controller {
                 'status' => 'pending',
                 'payment_method' => 'mercado_pago'
             ]);
+            
+            if (!$appointmentId) {
+                throw new Exception('Error al crear cita');
+            }
 
             $this->db->commit();
 
+            // Log successful booking
+            error_log("Booking successful: Customer $customerId, Appointment $appointmentId");
+
             // Redirect to payment or success page
             $_SESSION['appointment_id'] = $appointmentId;
+            $_SESSION['success'] = 'Cita creada exitosamente. Serás redirigido al pago.';
             $this->redirect('payment/create');
 
         } catch (Exception $e) {
             $this->db->rollBack();
-            error_log('Booking error: ' . $e->getMessage());
-            $_SESSION['error'] = $e->getMessage();
+            
+            $errorMessage = $e->getMessage();
+            $logMessage = 'Booking error: ' . $errorMessage;
+            
+            error_log($logMessage);
+            
+            // User-friendly error messages
+            if (strpos($errorMessage, 'Database') !== false || strpos($errorMessage, 'SQLSTATE') !== false) {
+                $errorMessage = 'Error de conexión con la base de datos. Por favor intenta de nuevo en unos minutos.';
+            } elseif (strpos($errorMessage, 'duplicate') !== false || strpos($errorMessage, 'UNIQUE') !== false) {
+                $errorMessage = 'Ya existe una cita para este horario. Por favor selecciona otro horario.';
+            } elseif (empty($errorMessage) || strpos($errorMessage, 'Error al') === false) {
+                $errorMessage = 'Error inesperado al procesar la reserva. Por favor intenta de nuevo.';
+            }
+            
+            $_SESSION['error'] = $errorMessage;
             $_SESSION['old_input'] = $_POST;
             $this->redirect('booking');
         }

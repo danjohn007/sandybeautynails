@@ -73,8 +73,24 @@ const Utils = {
     showLoading: function() {
         const modal = document.getElementById('loadingModal');
         if (modal) {
-            const bsModal = new bootstrap.Modal(modal);
-            bsModal.show();
+            try {
+                if (typeof bootstrap !== 'undefined') {
+                    const bsModal = new bootstrap.Modal(modal);
+                    bsModal.show();
+                } else {
+                    // Fallback without Bootstrap
+                    modal.style.display = 'block';
+                    modal.classList.add('show');
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        backdrop.style.cssText = 'position: fixed; top: 0; left: 0; z-index: 1040; width: 100vw; height: 100vh; background-color: #000; opacity: 0.5;';
+                        document.body.appendChild(backdrop);
+                    }
+                }
+            } catch (e) {
+                console.error('Error showing loading modal:', e);
+            }
         }
     },
 
@@ -82,9 +98,29 @@ const Utils = {
     hideLoading: function() {
         const modal = document.getElementById('loadingModal');
         if (modal) {
-            const bsModal = bootstrap.Modal.getInstance(modal);
-            if (bsModal) {
-                bsModal.hide();
+            try {
+                if (typeof bootstrap !== 'undefined') {
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) {
+                        bsModal.hide();
+                    }
+                } else {
+                    // Fallback without Bootstrap
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                }
+            } catch (e) {
+                console.error('Error hiding loading modal:', e);
+                // Force hide
+                modal.style.display = 'none';
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
             }
         }
     },
@@ -163,13 +199,34 @@ const Utils = {
 
         toastContainer.appendChild(toast);
         
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
+        try {
+            if (typeof bootstrap !== 'undefined') {
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+            } else {
+                // Fallback: show as alert
+                alert(message);
+                toast.remove();
+                return;
+            }
+        } catch (e) {
+            // Fallback: show as alert
+            alert(message);
+            toast.remove();
+            return;
+        }
 
         // Remove toast element after it's hidden
         toast.addEventListener('hidden.bs.toast', function() {
             toast.remove();
         });
+        
+        // Auto-remove after 5 seconds if Bootstrap events don't work
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 5000);
     },
 
     // Create toast container if it doesn't exist

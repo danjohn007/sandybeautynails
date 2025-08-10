@@ -46,6 +46,9 @@ class Controller {
         if (is_array($data)) {
             return array_map([$this, 'sanitize'], $data);
         }
+        if ($data === null) {
+            return null;
+        }
         return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
     }
 

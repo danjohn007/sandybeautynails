@@ -1,32 +1,33 @@
 <?php
-class Database {
+class DatabaseWithFallback {
     private static $instance = null;
     private $connection;
-    private $dbType = 'mysql';
+    private $dbType = 'unknown';
 
     private function __construct() {
         $this->initializeConnection();
     }
 
     private function initializeConnection() {
-        // Try MySQL first
+        // Try MySQL first if configured
         try {
             $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
             $this->connection = new PDO($dsn, DB_USER, DB_PASS, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::ATTR_TIMEOUT => 5 // 5 second timeout for production
+                PDO::ATTR_TIMEOUT => 5 // 5 second timeout
             ]);
             $this->dbType = 'mysql';
             error_log("Database connection successful: MySQL");
+            return;
         } catch (PDOException $e) {
             error_log("MySQL connection failed: " . $e->getMessage());
             
             // Try SQLite fallback if enabled
             if (defined('ENABLE_DB_FALLBACK') && ENABLE_DB_FALLBACK) {
                 try {
-                    $dbPath = dirname(dirname(__DIR__)) . '/storage/sandy_beauty_nails.db';
+                    $dbPath = dirname(dirname(__FILE__)) . '/storage/sandy_beauty_nails.db';
                     
                     // Ensure directory exists
                     if (!file_exists(dirname($dbPath))) {
@@ -41,13 +42,14 @@ class Database {
                     $this->dbType = 'sqlite_fallback';
                     $this->initializeSQLiteTables();
                     error_log("Database connection successful: SQLite fallback");
+                    return;
                 } catch (PDOException $e2) {
                     error_log("SQLite fallback also failed: " . $e2->getMessage());
-                    throw new PDOException("All database connections failed. MySQL: " . $e->getMessage());
                 }
-            } else {
-                throw $e;
             }
+            
+            // If we reach here, both connections failed
+            throw new PDOException("All database connections failed. MySQL: " . $e->getMessage());
         }
     }
 
@@ -56,6 +58,10 @@ class Database {
         $tables = $this->connection->query("SELECT name FROM sqlite_master WHERE type='table' AND name='services'")->fetchAll(PDO::FETCH_COLUMN);
         
         if (empty($tables)) {
+            // Load demo database schema
+            require_once dirname(__FILE__) . '/DemoDatabase.php';
+            $demo = new DemoDatabase();
+            // Copy the table creation logic (simplified for production)
             $this->createBasicTables();
         }
     }
@@ -109,13 +115,16 @@ class Database {
             total_amount DECIMAL(10,2) NOT NULL,
             notes TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (customer_id) REFERENCES customers(id),
+            FOREIGN KEY (service_id) REFERENCES services(id),
+            FOREIGN KEY (manicurist_id) REFERENCES manicurists(id)
         );
         ";
 
         $this->connection->exec($sql);
         
-        // Insert basic services if empty
+        // Insert basic data if empty
         $serviceCount = $this->connection->query("SELECT COUNT(*) FROM services")->fetchColumn();
         if ($serviceCount == 0) {
             $services = [
@@ -123,33 +132,13 @@ class Database {
                 ['Manicure Completo', 'Limado, cutícula, masaje y esmaltado', 350.00, 90],
                 ['Pedicure Básico', 'Limado, cutícula y esmaltado de pies', 300.00, 75],
                 ['Pedicure Completo', 'Limado, cutícula, masaje y esmaltado de pies', 450.00, 120],
-                ['Uñas Acrílicas', 'Extensión y decoración con acrílico', 800.00, 180],
-                ['Uñas de Gel', 'Aplicación de gel y diseño', 600.00, 150],
-                ['Manicure + Pedicure', 'Servicio completo de manos y pies', 650.00, 180],
-                ['Diseño Artístico', 'Decoración personalizada y nail art', 400.00, 120]
             ];
 
             $stmt = $this->connection->prepare("INSERT INTO services (name, description, price, duration) VALUES (?, ?, ?, ?)");
             foreach ($services as $service) {
                 $stmt->execute($service);
             }
-            
-            // Insert basic manicurists
-            $manicurists = [
-                ['Sandy Rodriguez', '555-0101', 'sandy@sandybeautynails.com', 'Especialista en uñas acrílicas'],
-                ['María González', '555-0102', 'maria@sandybeautynails.com', 'Manicure tradicional'],
-                ['Ana Martínez', '555-0103', 'ana@sandybeautynails.com', 'Uñas de gel']
-            ];
-
-            $stmt = $this->connection->prepare("INSERT INTO manicurists (name, phone, email, specialties) VALUES (?, ?, ?, ?)");
-            foreach ($manicurists as $manicurist) {
-                $stmt->execute($manicurist);
-            }
         }
-    }
-
-    public function getDbType() {
-        return $this->dbType;
     }
 
     public static function getInstance() {
@@ -161,6 +150,10 @@ class Database {
 
     public function getConnection() {
         return $this->connection;
+    }
+
+    public function getDbType() {
+        return $this->dbType;
     }
 
     public function query($sql, $params = []) {
@@ -198,3 +191,4 @@ class Database {
         return $this->connection->rollBack();
     }
 }
+?>
