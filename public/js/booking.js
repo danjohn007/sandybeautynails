@@ -77,13 +77,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('phone', phone);
 
-        fetch(window.location.origin + '/booking/check-customer', {
+        let baseUrl = window.location.pathname.includes('demo.php') 
+            ? window.location.origin + '/demo.php?route=' 
+            : window.location.origin + '/';
+            
+        fetch(baseUrl + 'booking/check-customer', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             Utils.hideLoading();
+            
+            if (data.error) {
+                Utils.showToast(data.error, 'danger');
+                return;
+            }
             
             customerInfoDiv.style.display = 'block';
             
@@ -124,8 +138,16 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             Utils.hideLoading();
-            Utils.showToast('Error al verificar cliente', 'danger');
-            console.error('Error:', error);
+            console.error('Customer check error:', error);
+            
+            let errorMessage = 'Error al verificar cliente';
+            if (error.message.includes('HTTP 5')) {
+                errorMessage = 'Error del servidor. Por favor intenta de nuevo';
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage = 'Error de conexión. Verifica tu conexión a internet';
+            }
+            
+            Utils.showToast(errorMessage, 'danger');
         });
     }
 
@@ -172,11 +194,20 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('manicurist_id', manicuristId);
         }
 
-        fetch(window.location.origin + '/booking/get-availability', {
+        let baseUrl = window.location.pathname.includes('demo.php') 
+            ? window.location.origin + '/demo.php?route=' 
+            : window.location.origin + '/';
+
+        fetch(baseUrl + 'booking/get-availability', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             timeSelect.innerHTML = '';
             
@@ -203,9 +234,17 @@ document.addEventListener('DOMContentLoaded', function() {
             timeSelect.disabled = false;
         })
         .catch(error => {
+            console.error('Availability error:', error);
             timeSelect.innerHTML = '<option value="">Error al cargar</option>';
-            Utils.showToast('Error al cargar horarios disponibles', 'danger');
-            console.error('Error:', error);
+            
+            let errorMessage = 'Error al cargar horarios disponibles';
+            if (error.message.includes('HTTP 5')) {
+                errorMessage = 'Error del servidor al cargar horarios';
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage = 'Error de conexión al cargar horarios';
+            }
+            
+            Utils.showToast(errorMessage, 'danger');
         });
     }
 
