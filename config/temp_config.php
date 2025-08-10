@@ -7,7 +7,7 @@ define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
 // App configuration
-define('APP_URL', 'http://localhost:8000');
+define('APP_URL', 'http://localhost:8001');
 define('APP_NAME', 'Sandy Beauty Nails');
 define('APP_TIMEZONE', 'America/Mexico_City');
 
